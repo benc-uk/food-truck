@@ -1,0 +1,11 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+include_ext = [ "go" ]
+include_dir = [ "cmd", "pkg" ]
+cmd = "go build -o ./tmp/server ./cmd/..."
+bin = "./tmp/server ./data/food-trucks.db"
+
+[misc]
+clean_on_exit = true

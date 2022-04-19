@@ -1,0 +1,62 @@
+definitions:
+  truck:
+    description: Truck is the truck model, used for both requests and responses
+    properties:
+      address:
+        description: Address in human readable form
+        type: string
+        x-go-name: Address
+      description:
+        description: Descripton / long text
+        type: string
+        x-go-name: Description
+      id:
+        description: The truck ID
+        type: string
+        x-go-name: ID
+      lat:
+        description: Latitude location
+        format: double
+        type: number
+        x-go-name: Lat
+      long:
+        description: Logitude location
+        format: double
+        type: number
+        x-go-name: Long
+      name:
+        description: The name of the truck
+        type: string
+        x-go-name: Name
+    type: object
+    x-go-name: Truck
+    x-go-package: github.com/benc-uk/food-truck/pkg/trucks
+paths:
+  /trucks/{lat}/{long}:
+    get:
+      description: Returns a list of trucks near a given lat & long
+      operationId: findTrucksNear
+      parameters:
+      - description: Latitude to search around
+        in: path
+        name: lat
+      - description: Longitude to search around
+        in: path
+        name: long
+      - description: Radius of search in meters (approx)
+        in: query
+        name: radius
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: truck
+          schema:
+            items:
+              $ref: '#/definitions/truck'
+            type: array
+        "400":
+          description: Input validation error
+        "500":
+          description: Other error
+swagger: "2.0"

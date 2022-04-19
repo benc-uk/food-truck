@@ -1,0 +1,26 @@
+#
+# REST helper/tester for Food Truck API
+# Install the incredible REST Client extension for VSCode
+# https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+#
+
+@apiEndpoint = http://localhost:8080
+@lat = 37.808
+#37.808
+#51.403278
+@long = -122.418
+#0.056169
+#-122.418
+@radius = 500
+
+# =======================================================
+# Call the API with a radius
+# =======================================================
+GET {{apiEndpoint}}/trucks/{{lat}}/{{long}}?radius={{radius}}
+
+###
+
+# =======================================================
+# Call the API with no radius, will try to find at least five
+# =======================================================
+GET {{apiEndpoint}}/trucks/{{lat}}/{{long}}

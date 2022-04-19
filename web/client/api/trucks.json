@@ -1,0 +1,26 @@
+[
+  {
+    "longitude": 0.076164, 
+    "latitude": 51.403275,
+    "name": "Burger Bloke",
+    "description": "Probably won't kill you"
+  },
+  {
+    "longitude": 0.066164, 
+    "latitude": 51.413275,
+    "name": "Chippy Man",
+    "description": "Mostly edible"
+  },
+  {
+    "longitude": 0.068164, 
+    "latitude": 51.417275,
+    "name": "Lots o' Lard",
+    "description": "Cooked in three week old lard, delicious"
+  },
+  {
+    "longitude": 0.068164, 
+    "latitude": 51.415275,
+    "name": "Probably Edible Kebabs",
+    "description": "Cooked in three week old lard, delicious"
+  }
+]

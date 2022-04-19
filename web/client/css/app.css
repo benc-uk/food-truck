@@ -1,0 +1,70 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+#top {
+  padding: 0.5rem;
+  background-color: #333;
+  color: #ddd;
+}
+
+#truckMap {
+  width: 100%;
+  height: 100%;
+  background-color: #333;
+}
+
+button {
+  background-color: rgb(39, 82, 156);
+  color: #ddd;
+  border: none;
+  padding: 0.7rem;
+  border-radius: 0.3rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: rgb(56, 103, 184);
+}
+
+#error {
+  color: rgb(218, 65, 65);
+  font-size: 1.2rem;
+  font-weight: bold;
+  display: none;
+}
+
+#locateUser {
+  justify-self: end !important;
+}
+
+.flexRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.m2 {
+  margin: 0.5rem;
+}
+
+.p2 {
+  padding: 0.5rem;
+}
+
+.ml2 {
+  margin-left: 0.5rem;
+}
+.ml3 {
+  margin-left: 1rem;
+}
+.ml4 {
+  margin-left: 2rem;
+}
