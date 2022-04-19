@@ -1,5 +1,5 @@
 # Common variables
-VERSION := 0.0.4
+VERSION := 0.0.5
 BUILD_INFO := Manual build from makefile
 SRC_DIR := ./cmd
 
@@ -9,12 +9,19 @@ IMAGE_REPO ?= benc-uk/food-truck
 IMAGE_TAG ?= latest
 IMAGE_PREFIX := $(IMAGE_REG)/$(IMAGE_REPO)
 
-.PHONY: help image push build run run-frontend generate test lint lint-fix install-tools deploy
-.DEFAULT_GOAL := help
-
+# Don't change these
 SWAGGER_PATH := ./bin/swagger
 AIR_PATH := ./bin/air
 GOLINT_PATH := ./bin/golangci-lint
+
+# Used for deployment only
+AZURE_DEPLOY_NAME ?= food-truck
+AZURE_REGION ?= westeurope
+AZURE_IMAGE ?= ghcr.io/benc-uk/food-truck:latest
+
+.PHONY: help image push build run run-frontend generate test lint lint-fix install-tools deploy
+.DEFAULT_GOAL := help
+.EXPORT_ALL_VARIABLES:
 
 help: ## 💬 This help message :)
 	@figlet $@ || true
@@ -53,14 +60,21 @@ run-frontend: ## 💻 Run frontend, with hot reload, for local development
 	browser-sync start --server ./web/client --no-ui --no-open --no-notify --watch
 
 install-tools: ## 🔮 Install dev tools
+	@figlet $@ || true
 	@$(GOLINT_PATH) > /dev/null 2>&1 || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ./bin/
 	@$(AIR_PATH) -v > /dev/null 2>&1 || curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh
 	@$(SWAGGER_PATH) version > /dev/null 2>&1 || ./scripts/download-goswagger.sh
 	npm install -g browser-sync
 
 generate: ## 🔬 Generate Swagger / OpenAPI spec
+	@figlet $@ || true
 	go generate ./cmd 
 	cp $(SRC_DIR)/swagger.yaml api/spec.yaml
 
-test: generate ## 🥽 Run unit and integration tests
+test: ## 🧪 Run unit and integration tests
+	@figlet $@ || true
 	go test ./... -v -count=1
+
+deploy: ## 🚀 Deploy to Azure using Bicep & Azure CLI
+	@figlet $@ || true
+	@./deploy/deploy.sh

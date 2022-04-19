@@ -27,6 +27,7 @@ Here is a outline of some of the key decisions, trade offs, limitations & choice
 
 - The repo adopts the "[Standard Go Project Layout](https://github.com/golang-standards/project-layout)" which can be unfamiliar to those that have not worked with Go. A full breakdown of the repo structure is provided below
 - In addition my [own project starter template](https://github.com/benc-uk/project-starter) and [Go REST API for bookstore](https://github.com/benc-uk/go-rest-books) were used to bring a lot of reuseable assets, boilerplate and working source code.
+- Bicep code was borrowed from two other personal projects [benc-uk/bicep-iac](https://github.com/benc-uk/bicep-iac) and [benc-uk/chatr](https://github.com/benc-uk/chatr)
 - The breaking up of the API code into many packages and multiple source files was probably overkill at this point in the project but it provided a common set of abstractions (controllers, services, middleware, data-handlers) and also testability
 
 ### Data
@@ -37,12 +38,12 @@ Here is a outline of some of the key decisions, trade offs, limitations & choice
 
 ### Front End
 
-- Purposefully kept very clean/simple, no framewor required. Vue.js or React would be overkill at this point.
+- Purposefully kept very clean/simple, no framework required. Vue.js or React would be overkill at this point.
 - Vanilla "modern" JS with ES5 modules and fetch.
 
 ### API
 
-- Standard REST API pattern was used, using standard HTTP.
+- Classic REST API, using HTTP.
 - Only queries & GETs are used with a single `/trucks` endpoint.
 - See [api/spec.yaml](./api/spec.yaml) for the OpenAPI description of the API, this is auto generated.
 - See the [API docs for further details](./api/)
@@ -50,7 +51,7 @@ Here is a outline of some of the key decisions, trade offs, limitations & choice
 ### Limitations, Known Issues & Backlog
 
 - The query for finding nearby trucks is _extremely_ suboptimal and a borderline hack. Switching to a database service with spatial support like Cosmos, PostgreSQL or Azure SQL should be the highest priority
-- ~~Auth key to Azure Maps should be fetched with API, not baked into frontend code.~~
+- ~~Auth key to Azure Maps should be fetched with API, not baked into frontend code.~~ DONE!
 - GitHub Actions for CI & CD
   - ~~Automate builds~~ DONE!
   - ~~Automate tests~~ DONE!
@@ -71,7 +72,7 @@ The rest of the readme follows in a format similar to one I use on my many open 
 ![](https://img.shields.io/github/last-commit/benc-uk/food-truck)
 ![](https://img.shields.io/github/release/benc-uk/food-truck)
 
-![](https://img.shields.io/github/checks-status/benc-uk/food-truck/main)
+![](https://img.shields.io/github/last-commit/benc-uk/food-truck)
 ![](https://img.shields.io/github/workflow/status/benc-uk/food-truck/CI%20Build?label=ci-build)
 
 # 🏃‍♂️ Getting Started
@@ -89,26 +90,46 @@ run                  🏃 Run backend server, with hot reload, for local develop
 run-frontend         💻 Run frontend, with hot reload, for local development
 install-tools        🔮 Install dev tools
 generate             🔬 Generate Swagger / OpenAPI spec
-test                 🥽 Run unit and integration tests
+test                 🧪 Run unit and integration tests
+deploy               🚀 Deploy to Azure using Bicep & Azure CLI
 ```
 
 # 🚀 Installing / Deploying
 
-Deploy to Azure using `make deploy` this will deploy the to Azure Container Apps (note only certain regions presently supported) plus the Azure Maps account.
+Deploy to Azure using `make deploy` this will deploy to Azure Container Apps (NOTE: only certain regions presently supported) plus the Azure Maps account. Set `AZURE_IMAGE` variable when running `make deploy` in order to deploy your own image, otherwise `ghcr.io/benc-uk/food-truck:latest` will be used.
 
-This is done with some Bicep template & modules. You will need Azure CLI with the Bicep add-on installed.
+Deployment is done through Bicep with a set of template & modules. You will need Azure CLI with the Bicep add-on installed.
 
-# 📦 Running as container
+# 🏃 Running Locally
 
+Before running locally you will need to deploy Azure Maps account in Azure and obtain the shared access key. This can easily be done with the Azure CLI, e.g.
+
+```bash
+RES_GROUP=__CHANGE_ME__
+az maps account create --name food-truck-maps --resource-group $RES_GROUP --kind Gen2 --sku G2
+az maps account keys list --name food-truck-maps --resource-group $RES_GROUP
+```
+
+## 📦 Running as a container
+
+- PRE-REQS: Docker engine installed locally and Docker CLI
 - Build the images locally `make image`
   - Be sure to override and set your own `IMAGE_REG` and `IMAGE_REPO` e.g. `make image IMAGE_REG=foo`
-- Run the public image using `docker run --rm -it -p 8080:8080 ghcr.io/benc-uk/food-truck:latest`
+- ALTERNATIVELY: Run the public image directly using
 
-📝 NOTE! When running in a container the frontend is served from a different path, `/app/` so to access it locally use http://localhost:8080/app/
+```bash
+docker run --rm -it -p 8080:8080 \
+  -e AZURE_MAPS_KEY=__YOUR_MAPS_KEY__ \
+  ghcr.io/benc-uk/food-truck:latest
+```
 
-# 💻 Running locally
+📝 NOTE! When running in a container the frontend is served from a different path, `/app/` so to access it locally use http://localhost:8080/app/ (Note the trailing slash!)
 
-Run the server using:
+## 💻 Running using Go
+
+Copy `.env.sample` to `.env` and edit the file, setting AZURE_MAPS_KEY to the correct value.
+
+Now run the server and backend API using:
 
 ```bash
 make run
