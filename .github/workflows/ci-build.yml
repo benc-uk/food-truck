@@ -25,6 +25,10 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
+      # Install tools 
+      - name: Install tooling
+        run: make install-tools
+
       # Validate code
       - name: Check code for linting and format errors
         run: make lint

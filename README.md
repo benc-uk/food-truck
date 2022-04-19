@@ -71,7 +71,6 @@ The rest of the readme follows in a format similar to one I use on my many open 
 
 ![](https://img.shields.io/github/checks-status/benc-uk/food-truck/main)
 ![](https://img.shields.io/github/workflow/status/benc-uk/food-truck/CI%20Build?label=ci-build)
-![](https://img.shields.io/github/workflow/status/benc-uk/food-truck/Release%20Assets?label=release)
 
 # 🏃‍♂️ Getting Started
 
