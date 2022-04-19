@@ -5,7 +5,7 @@ FROM golang:1.18-alpine as go-build
 WORKDIR /build
 ARG GO_PACKAGE="github.com/benc-uk/food-truck/cmd/main"
 ARG VERSION="1.0.0"
-ARG BUILD_INFO="Not set"
+ARG BUILD_INFO="Dockerfile build"
 
 # Install system dependencies
 RUN apk update && apk add git gcc musl-dev
@@ -35,6 +35,12 @@ COPY data ./data
 # Copy the Go server binary
 COPY --from=go-build /build/server . 
 
+# Location of database file and frontend set as environment variables
+ENV DATABASE_PATH "/app/data/food-trucks.db"
+ENV FRONTEND_DIR "./frontend"
+ENV PORT 8080
+
 EXPOSE 8080
-# Start the backend passing the path to the database and the path to the frontend
-CMD [ "./server", "/app/data/food-trucks.db", "./frontend"]
+
+# Start the backend 
+CMD [ "./server" ]

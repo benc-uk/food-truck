@@ -1,6 +1,6 @@
 # Common variables
-VERSION := 0.0.1
-BUILD_INFO := Manual build 
+VERSION := 0.0.2
+BUILD_INFO := Manual build from makefile
 #SRC_DIR := cmd
 SRC_DIR := ./cmd
 
@@ -31,7 +31,7 @@ lint-fix: ## 🔍 Lint & format, will try to fix errors and modify code
 
 image: ## 📦 Build container image from Dockerfile
 	@figlet $@ || true
-	docker build --file ./build/Dockerfile \
+	docker build --no-cache --file ./build/Dockerfile \
 	--build-arg BUILD_INFO="$(BUILD_INFO)" \
 	--build-arg VERSION="$(VERSION)" \
 	--tag $(IMAGE_PREFIX):$(IMAGE_TAG) . 

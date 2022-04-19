@@ -13,9 +13,12 @@ import (
 
 	"github.com/benc-uk/food-truck/pkg/trucks"
 	"github.com/gorilla/mux"
+
+	_ "github.com/joho/godotenv/autoload" // Autoloads .env file if it exists
 )
 
-const serverPort = "8080"
+var version = "0.0.0"           // App version number, set at build time with -ldflags "-X main.version=1.2.3"
+var buildInfo = "No build info" // Build details, set at build time with -ldflags "-X main.buildInfo=blah"
 
 //go:generate ../bin/swagger generate spec -m -o swagger.yaml
 //go:embed swagger.yaml
@@ -24,23 +27,29 @@ var swaggerSpec []byte
 func main() {
 	router := mux.NewRouter()
 
-	dbPath := "./data/food-trucks.db"
-	if len(os.Args) > 1 {
-		dbPath = os.Args[1]
+	serverPort := os.Getenv("PORT")
+	if serverPort == "" {
+		serverPort = "8080"
 	}
-	log.Printf("Using database: %s", dbPath)
 
-	frontendDir := "./web/client"
-	if len(os.Args) > 2 {
-		frontendDir = os.Args[2]
+	dbPath := os.Getenv("DATABASE_PATH")
+	if dbPath == "" {
+		dbPath = "./data/food-trucks.db"
 	}
+
+	frontendDir := os.Getenv("FRONTEND_DIR")
+	if frontendDir == "" {
+		frontendDir = "./web/client"
+	}
+
+	log.Printf("Using database: %s", dbPath)
 	log.Println("Using frontend dir:", frontendDir)
 
 	truckAPI := &trucks.API{
 		Service: trucks.NewService(data.NewDatabase(dbPath)),
 		Base: api.Base{
 			Healthy: true,
-			Version: "1.0.0",
+			Version: version,
 			Name:    "Food Truck API",
 		},
 	}
@@ -69,6 +78,7 @@ func main() {
 		Addr:              ":" + serverPort,
 	}
 
+	log.Printf("API version: %s - Build details: %s", truckAPI.Version, buildInfo)
 	log.Printf("HTTP server for '%s' starting on port %s", truckAPI.Name, serverPort)
 	err := server.ListenAndServe()
 	if err != nil {
