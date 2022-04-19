@@ -20,7 +20,7 @@ definitions:
         type: number
         x-go-name: Lat
       long:
-        description: Logitude location
+        description: Longitude location
         format: double
         type: number
         x-go-name: Long

@@ -29,7 +29,7 @@ type Truck struct {
 	// Latitude location
 	Lat float64 `json:"lat"`
 
-	// Logitude location
+	// Longitude location
 	Long float64 `json:"long"`
 
 	addressNullStr sql.NullString

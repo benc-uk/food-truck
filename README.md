@@ -52,11 +52,13 @@ Here is a outline of some of the key decisions, trade offs, limitations & choice
 - The query for finding nearby trucks is _extremely_ suboptimal and a borderline hack. Switching to a database service with spatial support like Cosmos, PostgreSQL or Azure SQL should be the highest priority
 - Auth key to Azure Maps should be fetched with API, not baked into frontend code.
 - GitHub Actions for CI & CD
-  - Automate tests
+  - ~~Automate builds~~ DONE!
+  - ~~Automate tests~~ DONE!
 - Rate limiting on the API (should use a upstream traffic gateway, e.g. ingress controller in Kubernetes NGINX/Envoy or Azure service like App Gateway)
 - Auth in front of the API (likewise this should be handled by the gateway to do JWT validation etc)
 - Sem ver for images and releases
 - Fix the unit tests with the database mocked/stubbed
+- Add end to end API & performance tests, k6.io is my tool of choice for this, or Postman/Newman
 - Switch to RFC 7807 (Problem Details) for API errors https://datatracker.ietf.org/doc/html/rfc7807
 
 The rest of the readme follows in a format similar to one I use on my many open source projects on GitHub
@@ -165,18 +167,25 @@ A brief description of the top-level directories of this project is as follows:
 ├── data         - Application data, SQLite db file(s)
 ├── deploy       - Deployment assets, Bicep templates to deploy to Azure
 ├── pkg          - Go source packages
-│   ├── api      - Base API
+│   ├── api      - Base API common
 │   ├── data     - Data layer for calling SQLite
 │   └── trucks   - Truck API and service
-├── scripts      -
-├── tests
-└── web
-    └── client
+├── scripts      - Some helper scripts
+├── tests        - Reserved for API & performance tests
+└── web          
+    └── client   - The application frontend source code
 ```
 
 # 🌐 API
 
-See the [API documentation](./api/) for full infomration about the API(s).
+See the [API documentation](./api/) for full information about the API(s)
+
+## Other Endpoints
+- `/metrics` - Metrics in Prometheus format for observability 
+- `/status` - Simple status API
+- `/health` - Heath check for use with Kubernetes & load balancer probes
+- `/swagger` - Swagger UI
+
 
 # 🪵 Change Log
 

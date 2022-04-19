@@ -33,8 +33,13 @@ jobs:
       - name: Check code for linting and format errors
         run: make lint
 
-      # Build image
+      # Run tests
+      - name: Run those tests
+        run: make test
+
+      # Build image only on merge to main
       - name: Build the container image
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: make image IMAGE_REPO=$GITHUB_ACTOR/$IMAGE_NAME
 
       # Only when pushing to default branch (e.g. master or main), then push image to registry
