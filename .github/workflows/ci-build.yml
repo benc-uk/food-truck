@@ -12,7 +12,7 @@ on:
 
 env:
   IMAGE_REG: ghcr.io
-  IMAGE_NAME: benc-uk/food-truck
+  IMAGE_NAME: food-truck
   IMAGE_TAG: latest
 
 jobs:
