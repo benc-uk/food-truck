@@ -3,8 +3,7 @@
 // ========================================================
 
 import 'https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.js'
-import { fetchTrucksNear } from './api-client.js'
-import { AZURE_MAPS_KEY } from '../config.js'
+import { fetchTrucksNear, fetchConfig } from './api-client.js'
 
 let map = null
 const defaultZoom = 15
@@ -15,14 +14,27 @@ const radius = 600
 // =============================================================================
 // Initialize the map and application
 // =============================================================================
-function initApp() {
+async function initApp() {
+  // Load config dynamically at start up from API
+  let config
+  try {
+    config = await fetchConfig()
+    if (!config || !config.azureMapsKey) {
+      throw 'invalid or missing config'
+    }
+    console.log(`### Config: ${JSON.stringify(config)}`)
+  } catch (err) {
+    showError('Config error: ' + err)
+    return
+  }
+
   map = new atlas.Map('truckMap', {
     view: 'Auto',
 
     authOptions: {
       authType: 'subscriptionKey',
 
-      subscriptionKey: AZURE_MAPS_KEY,
+      subscriptionKey: config.azureMapsKey,
     },
   })
 

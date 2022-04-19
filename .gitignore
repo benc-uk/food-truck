@@ -1,3 +1,4 @@
 # See https://www.gitignore.io/ to generate a gitignore file
 bin/**
 tmp/**
+.env

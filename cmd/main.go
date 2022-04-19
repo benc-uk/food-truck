@@ -42,6 +42,11 @@ func main() {
 		frontendDir = "./web/client"
 	}
 
+	azureMapsKey := os.Getenv("AZURE_MAPS_KEY")
+	if azureMapsKey == "" {
+		log.Fatalln("FATAL! Missing AZURE_MAPS_KEY environment variable")
+	}
+
 	log.Printf("Using database: %s", dbPath)
 	log.Println("Using frontend dir:", frontendDir)
 
@@ -68,6 +73,12 @@ func main() {
 
 	// Static content to serve the frontend
 	router.PathPrefix("/app/").Handler(http.StripPrefix("/app/", http.FileServer(http.Dir(frontendDir))))
+
+	// Very simple API to return the AZURE_MAPS_KEY env var
+	router.Path("/config").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"azureMapsKey": "` + azureMapsKey + `"}`))
+	})
 
 	server := &http.Server{
 		ReadTimeout:       1 * time.Second,

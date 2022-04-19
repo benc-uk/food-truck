@@ -40,6 +40,9 @@ ENV DATABASE_PATH "/app/data/food-trucks.db"
 ENV FRONTEND_DIR "./frontend"
 ENV PORT 8080
 
+# This should *always* be set and overidden at runtime
+ENV AZURE_MAPS_KEY ""
+
 EXPOSE 8080
 
 # Start the backend 

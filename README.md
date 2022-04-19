@@ -31,7 +31,7 @@ Here is a outline of some of the key decisions, trade offs, limitations & choice
 
 ### Data
 
-- SQLite DB was used rather than a CSV file, this was sourced from here https://san-francisco.datasettes.com/food-trucks. A full blown database service was felt to be overkill for the assignment but being able to use SQL queries represented 
+- SQLite DB was used rather than a CSV file, this was sourced from here https://san-francisco.datasettes.com/food-trucks. A full blown database service was felt to be overkill for the assignment but being able to use SQL queries represented
 - SQLite is extremely fast & powerful, but it's a very bad choice for a real backend, this decision was purely tactical.
 - There are some duplicates in the database, with the same name, lat & long but different IDs. This can result in less than 5 trucks being shown on the map even when 5 or more are present in the data returned from the API
 
@@ -42,7 +42,7 @@ Here is a outline of some of the key decisions, trade offs, limitations & choice
 
 ### API
 
-- Standard REST API pattern was used, using standard HTTP. 
+- Standard REST API pattern was used, using standard HTTP.
 - Only queries & GETs are used with a single `/trucks` endpoint.
 - See [api/spec.yaml](./api/spec.yaml) for the OpenAPI description of the API, this is auto generated.
 - See the [API docs for further details](./api/)
@@ -50,7 +50,7 @@ Here is a outline of some of the key decisions, trade offs, limitations & choice
 ### Limitations, Known Issues & Backlog
 
 - The query for finding nearby trucks is _extremely_ suboptimal and a borderline hack. Switching to a database service with spatial support like Cosmos, PostgreSQL or Azure SQL should be the highest priority
-- Auth key to Azure Maps should be fetched with API, not baked into frontend code.
+- ~~Auth key to Azure Maps should be fetched with API, not baked into frontend code.~~
 - GitHub Actions for CI & CD
   - ~~Automate builds~~ DONE!
   - ~~Automate tests~~ DONE!
@@ -94,8 +94,9 @@ test                 🥽 Run unit and integration tests
 
 # 🚀 Installing / Deploying
 
-- Deploy to Azure using `make deploy`
-- 💥 NOTE: There is currently a limitation where the key for Azure maps is baked into the frontend code. This is a high priority backlog item. Update the key in web/client/config.js, build & push the image before deploying
+Deploy to Azure using `make deploy` this will deploy the to Azure Container Apps (note only certain regions presently supported) plus the Azure Maps account.
+
+This is done with some Bicep template & modules. You will need Azure CLI with the Bicep add-on installed.
 
 # 📦 Running as container
 
@@ -146,13 +147,12 @@ Standard SPA (Single Page Application) style frontend with REST backend
 
 # 🔧 Configuration
 
-Details of any configuration files, environmental variables, command line parameters, etc.
-
-For services
+The following env vars are used by the backend server. `.env` (aka dotenv) is looked for and loaded when working locally
 
 | Setting / Variable | Purpose                                                  | Default                 |
 | ------------------ | -------------------------------------------------------- | ----------------------- |
-| PORT               | Port the server will listen on.                          | 8080                    |
+| AZURE_MAPS_KEY     | Azure Maps shared access key                             | _None_                  |
+| PORT               | Port the server will listen on                           | 8080                    |
 | DATABASE_PATH      | Path to the database file                                | "./data/food-trucks.db" |
 | FRONTEND_DIR       | Where the frontend HTML/JS is located for static serving | "./web/client"          |
 
@@ -172,7 +172,7 @@ A brief description of the top-level directories of this project is as follows:
 │   └── trucks   - Truck API and service
 ├── scripts      - Some helper scripts
 ├── tests        - Reserved for API & performance tests
-└── web          
+└── web
     └── client   - The application frontend source code
 ```
 
@@ -181,11 +181,12 @@ A brief description of the top-level directories of this project is as follows:
 See the [API documentation](./api/) for full information about the API(s)
 
 ## Other Endpoints
-- `/metrics` - Metrics in Prometheus format for observability 
+
+- `/config` - Used by the frontend to get configuration, i.e. the Azure Maps key
+- `/metrics` - Metrics in Prometheus format for observability
 - `/status` - Simple status API
 - `/health` - Heath check for use with Kubernetes & load balancer probes
 - `/swagger` - Swagger UI
-
 
 # 🪵 Change Log
 

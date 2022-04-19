@@ -13,7 +13,11 @@ const HEADERS = {
 }
 
 export async function fetchTrucksNear(lat, long, radius) {
-  return await apiCall(`trucks/${lat}/${long}`) //?radius=${radius}`)
+  return await apiCall(`trucks/${lat}/${long}`)
+}
+
+export async function fetchConfig() {
+  return await apiCall(`config`)
 }
 
 async function apiCall(apiPath, method = 'get', data = null) {

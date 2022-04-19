@@ -1,7 +1,6 @@
 # Common variables
-VERSION := 0.0.2
+VERSION := 0.0.4
 BUILD_INFO := Manual build from makefile
-#SRC_DIR := cmd
 SRC_DIR := ./cmd
 
 # Most likely want to override these when calling `make image`
@@ -10,7 +9,7 @@ IMAGE_REPO ?= benc-uk/food-truck
 IMAGE_TAG ?= latest
 IMAGE_PREFIX := $(IMAGE_REG)/$(IMAGE_REPO)
 
-.PHONY: help image push build run lint lint-fix install-tools
+.PHONY: help image push build run run-frontend generate test lint lint-fix install-tools deploy
 .DEFAULT_GOAL := help
 
 SWAGGER_PATH := ./bin/swagger
