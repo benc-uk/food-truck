@@ -1,5 +1,5 @@
 # Common variables
-VERSION := 0.0.5
+VERSION := 0.0.6
 BUILD_INFO := Manual build from makefile
 SRC_DIR := ./cmd
 
