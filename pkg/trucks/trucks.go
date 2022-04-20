@@ -8,12 +8,13 @@ import (
 
 // API is the main truck API
 type API struct {
+	// API includes the trucks service, we're not using DI here
 	Service Service
-	// Use composition and embedding to extend the API base
+	// Use composition and embedding to wrap & extend the API base
 	api.Base
 }
 
-// Truck is the truck model, used for both requests and responses
+// "Truck" is the main truck model, used for both requests and responses
 // swagger:model truck
 type Truck struct {
 	// The truck ID

@@ -1,25 +1,37 @@
 // ========================================================
-// API Client for Food Trucks
+// Simple API Client for Food Trucks
 // ========================================================
 
-let API_ENDPOINT = '/'
-
-if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
-  API_ENDPOINT = 'http://localhost:8080/'
-}
+const API_ENDPOINT = '/'
 
 const HEADERS = {
   'Content-Type': 'application/json',
 }
 
-export async function fetchTrucksNear(lat, long, radius) {
+// ========================================================
+// Call to the find 5 trucks near point API
+// ========================================================
+export async function getTrucksNear(lat, long) {
   return await apiCall(`trucks/${lat}/${long}`)
 }
 
-export async function fetchConfig() {
+// ========================================================
+// Call to the find trucks in radius of point API
+// ========================================================
+export async function getTrucksInRadius(lat, long, radius) {
+  return await apiCall(`trucks/${lat}/${long}?radius=${radius}`)
+}
+
+// ========================================================
+// Used to fetch config from the server
+// ========================================================
+export async function getConfig() {
   return await apiCall(`config`)
 }
 
+// ========================================================
+// Wrapper around fetch, private and not exported
+// ========================================================
 async function apiCall(apiPath, method = 'get', data = null) {
   const resp = await fetch(`${API_ENDPOINT}${apiPath}`, {
     method,

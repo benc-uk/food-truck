@@ -1,6 +1,6 @@
 definitions:
   truck:
-    description: Truck is the truck model, used for both requests and responses
+    description: '"Truck" is the main truck model, used for both requests and responses'
     properties:
       address:
         description: Address in human readable form

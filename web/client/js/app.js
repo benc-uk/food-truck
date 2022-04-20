@@ -3,13 +3,15 @@
 // ========================================================
 
 import 'https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.js'
-import { fetchTrucksNear, fetchConfig } from './api-client.js'
+
+// Use the API client
+import { getTrucksNear, getTrucksInRadius, getConfig } from './api-client.js'
 
 let map = null
 const defaultZoom = 15
 var userDatasource = null
 var truckDatasource = null
-const radius = 600
+const radius = 500
 
 // =============================================================================
 // Initialize the map and application
@@ -18,7 +20,7 @@ async function initApp() {
   // Load config dynamically at start up from API
   let config
   try {
-    config = await fetchConfig()
+    config = await getConfig()
     if (!config || !config.azureMapsKey) {
       throw 'invalid or missing config'
     }
@@ -98,7 +100,11 @@ async function showTrucks(lat, long) {
 
   // Call the API
   try {
-    const trucks = await fetchTrucksNear(long, lat, radius)
+    // I prefer this API and just get trucks around the user
+    //const trucks = await getTrucksInRadius(long, lat, radius)
+
+    // We could search for ANY 5 trucks, but they could be hundreds of miles away, seems dumb
+    const trucks = await getTrucksNear(long, lat)
 
     // Process the data
     for (const truck of trucks) {

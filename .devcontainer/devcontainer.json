@@ -1,9 +1,13 @@
 {
   "name": "Food Truck",
-
   "image": "mcr.microsoft.com/vscode/devcontainers/go",
-  "runArgs": ["--init", "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined"],
-
+  "runArgs": [
+    "--init",
+    "--cap-add=SYS_PTRACE",
+    "--security-opt",
+    "seccomp=unconfined"
+  ],
+  
   // Set *default* container specific settings.json values on container create.
   "settings": {
     "go.toolsManagement.checkForUpdates": "local",
@@ -12,20 +16,16 @@
     "go.goroot": "/usr/local/go"
   },
 
-  "features": {
-    "node": {
-      "version": "lts"
-    }
-  },
-
   // Add the IDs of extensions you want installed when the container is created.
-  "extensions": ["golang.Go"],
+  "extensions": [
+    "golang.Go"
+  ],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "make install-tools",
+  "postCreateCommand": "sudo apt update && sudo apt-get install -y figlet && make install-tools",
 
   // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "vscode"

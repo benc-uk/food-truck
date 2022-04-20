@@ -55,16 +55,11 @@ run: ## 🏃 Run backend server, with hot reload, for local development
 	@figlet $@ || true
 	$(AIR_PATH) -c .air.toml
 
-run-frontend: ## 💻 Run frontend, with hot reload, for local development
-	@figlet $@ || true
-	browser-sync start --server ./web/client --no-ui --no-open --no-notify --watch
-
-install-tools: ## 🔮 Install dev tools
+install-tools: ## 🔮 Install dev tools into project bin directory
 	@figlet $@ || true
 	@$(GOLINT_PATH) > /dev/null 2>&1 || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ./bin/
 	@$(AIR_PATH) -v > /dev/null 2>&1 || curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh
 	@$(SWAGGER_PATH) version > /dev/null 2>&1 || ./scripts/download-goswagger.sh
-	npm install -g browser-sync
 
 generate: ## 🔬 Generate Swagger / OpenAPI spec
 	@figlet $@ || true

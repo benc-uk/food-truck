@@ -22,6 +22,7 @@ Here is a outline of some of the key decisions, trade offs, limitations & choice
 - Unit & integration tests
 - Runnable images are hosted here on GitHub
 - Bicep template for deployment to Azure running as a Azure Container App
+- Dev Container with all required tooling, to support local development
 
 ### Project Structure
 
@@ -32,14 +33,14 @@ Here is a outline of some of the key decisions, trade offs, limitations & choice
 
 ### Data
 
-- SQLite DB was used rather than a CSV file, this was sourced from here https://san-francisco.datasettes.com/food-trucks. A full blown database service was felt to be overkill for the assignment but being able to use SQL queries represented
-- SQLite is extremely fast & powerful, but it's a very bad choice for a real backend, this decision was purely tactical.
-- There are some duplicates in the database, with the same name, lat & long but different IDs. This can result in less than 5 trucks being shown on the map even when 5 or more are present in the data returned from the API
+- SQLite DB was used rather than a CSV file, this was sourced from here https://san-francisco.datasettes.com/food-trucks. A full blown database service was felt to be overkill for the assignment but being able to use SQL queries represented a reasonable degree of "realism".
+- SQLite is extremely fast & powerful, but it's a extremely bad choice for a real backend & CRUD, so this decision was purely tactical and doesn't represent best/recommended practice.
+- There are some duplicates in the database, with the same name, lat & long but different IDs. This can result in less than 5 trucks being shown on the map even when 5 or more are present in the data returned from the API.
 
 ### Front End
 
-- Purposefully kept very clean/simple, no framework required. Vue.js or React would be overkill at this point.
-- Vanilla "modern" JS with ES5 modules and fetch.
+- Purposefully kept very clean/simple, no framework required. Vue.js or React would be overkill at this point. [Alpine.js](https://alpinejs.dev/) was considered but with no reactive components in the app, even this minimal library would be too much.
+- Vanilla "modern" JS was used, with ES5 modules allowing code structuring and fetch for API calls.
 
 ### API
 
@@ -50,17 +51,18 @@ Here is a outline of some of the key decisions, trade offs, limitations & choice
 
 ### Limitations, Known Issues & Backlog
 
-- The query for finding nearby trucks is _extremely_ suboptimal and a borderline hack. Switching to a database service with spatial support like Cosmos, PostgreSQL or Azure SQL should be the highest priority
+- The query for finding nearby trucks is _extremely_ suboptimal and a borderline hack. Switching to a database service with spatial support like Cosmos, PostgreSQL or Azure SQL should be the highest priority.
 - ~~Auth key to Azure Maps should be fetched with API, not baked into frontend code.~~ DONE!
 - GitHub Actions for CI & CD
   - ~~Automate builds~~ DONE!
   - ~~Automate tests~~ DONE!
-- Rate limiting on the API (should use a upstream traffic gateway, e.g. ingress controller in Kubernetes NGINX/Envoy or Azure service like App Gateway)
-- Auth in front of the API (likewise this should be handled by the gateway to do JWT validation etc)
-- Sem ver for images and releases
-- Fix the unit tests with the database mocked/stubbed
-- Add end to end API & performance tests, k6.io is my tool of choice for this, or Postman/Newman
+- Rate limiting on the API (should use a upstream traffic gateway, e.g. ingress controller in Kubernetes NGINX/Envoy or Azure service like App Gateway).
+- Auth in front of the API (likewise this should be handled by the gateway to do JWT validation etc).
+- Sem ver for images and releases.
+- Fix the unit tests with the database mocked/stubbed.
+- Add end to end API & performance tests, k6.io is my tool of choice for this, or Postman/Newman.
 - Switch to RFC 7807 (Problem Details) for API errors https://datatracker.ietf.org/doc/html/rfc7807
+- Consider switching to dependency injection but should weigh up the pros & cons.
 
 The rest of the readme follows in a format similar to one I use on my many open source projects on GitHub
 
@@ -77,7 +79,7 @@ The rest of the readme follows in a format similar to one I use on my many open 
 
 # 🏃‍♂️ Getting Started
 
-The makefile is the main starting point for working with this repo, simply calling `make` will provide this help text
+The makefile is the main starting point for working with this project, simply calling `make` will provide this help text. If you are using a system without access to make, I suggest using the provided dev container.
 
 ```text
 help                 💬 This help message :)
@@ -86,8 +88,7 @@ lint-fix             🔍 Lint & format, will try to fix errors and modify code
 image                📦 Build container image from Dockerfile
 push                 📤 Push container image to registry
 build                🔨 Run a local build without a container
-run                  🏃 Run backend server, with hot reload, for local development
-run-frontend         💻 Run frontend, with hot reload, for local development
+run                  🏃 Run server & frontend host, with hot reload for local dev
 install-tools        🔮 Install dev tools
 generate             🔬 Generate Swagger / OpenAPI spec
 test                 🧪 Run unit and integration tests
@@ -107,14 +108,14 @@ Before running locally you will need to deploy Azure Maps account in Azure and o
 ```bash
 RES_GROUP=__CHANGE_ME__
 az maps account create --name food-truck-maps --resource-group $RES_GROUP --kind Gen2 --sku G2
-az maps account keys list --name food-truck-maps --resource-group $RES_GROUP
+echo Access key is: $(az maps account keys list --name food-truck-maps --resource-group $RES_GROUP --query primaryKey -o tsv)
 ```
 
 ## 📦 Running as a container
 
 - PRE-REQS: Docker engine installed locally and Docker CLI
 - Build the images locally `make image`
-  - Be sure to override and set your own `IMAGE_REG` and `IMAGE_REPO` e.g. `make image IMAGE_REG=foo`
+  - Be sure to override and set your own `IMAGE_REG` and `IMAGE_REPO` e.g. `make image IMAGE_REPO=myfoodtruck`
 - ALTERNATIVELY: Run the public image directly using
 
 ```bash
@@ -127,7 +128,9 @@ docker run --rm -it -p 8080:8080 \
 
 ## 💻 Running using Go
 
-Copy `.env.sample` to `.env` and edit the file, setting AZURE_MAPS_KEY to the correct value.
+If you do not have Go installed, then open the repo the provided dev container, this has all the tools you will need
+
+Copy `.env.sample` to `.env` and edit the file, setting **AZURE_MAPS_KEY** to the correct value.
 
 Now run the server and backend API using:
 
@@ -135,13 +138,7 @@ Now run the server and backend API using:
 make run
 ```
 
-In a separate terminal session, run:
-
-```bash
-make run-frontend
-```
-
-Access the app using http://localhost:3000/
+Access the app using http://localhost:8080/app/
 
 # 🧪 Running Tests
 
@@ -192,14 +189,15 @@ A brief description of the top-level directories of this project is as follows:
 │   ├── data     - Data layer for calling SQLite
 │   └── trucks   - Truck API and service
 ├── scripts      - Some helper scripts
-├── tests        - Reserved for API & performance tests
 └── web
     └── client   - The application frontend source code
 ```
 
-# 🌐 API
+# 🌐 REST API
 
-See the [API documentation](./api/) for full information about the API(s)
+See the [API documentation](./api/) for full information about the food truck API(s)  
+
+To aid development work and testing a REST API file is provided `api/test-api.http` this requires the [REST Client extension for VSCode](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) and allows for making test calls to the API from within VSCode
 
 ## Other Endpoints
 

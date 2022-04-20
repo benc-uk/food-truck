@@ -68,13 +68,13 @@ func main() {
 	truckAPI.AddHealth(router)
 	truckAPI.AddStatus(router)
 
-	// Lastly add the swagger UI
+	// Add the swagger UI
 	router.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger", swaggerui.Handler(swaggerSpec)))
 
-	// Static content to serve the frontend
+	// Static content handler, to serve the frontend
 	router.PathPrefix("/app/").Handler(http.StripPrefix("/app/", http.FileServer(http.Dir(frontendDir))))
 
-	// Very simple API to return the AZURE_MAPS_KEY env var
+	// Very simple config API to return the AZURE_MAPS_KEY env var
 	router.Path("/config").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = w.Write([]byte(`{"azureMapsKey": "` + azureMapsKey + `"}`))
@@ -85,8 +85,9 @@ func main() {
 		WriteTimeout:      1 * time.Second,
 		IdleTimeout:       30 * time.Second,
 		ReadHeaderTimeout: 2 * time.Second,
-		Handler:           truckAPI.CORSHandler([]string{"*"}, router),
-		Addr:              ":" + serverPort,
+		// CORS needs to be added here, and can't be done as middleware
+		Handler: truckAPI.CORSHandler([]string{"*"}, router),
+		Addr:    ":" + serverPort,
 	}
 
 	log.Printf("API version: %s - Build details: %s", truckAPI.Version, buildInfo)
