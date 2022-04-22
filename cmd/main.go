@@ -9,11 +9,9 @@ import (
 
 	"github.com/benc-uk/food-truck/pkg/api"
 	"github.com/benc-uk/food-truck/pkg/data"
-	"github.com/flowchartsman/swaggerui"
-
 	"github.com/benc-uk/food-truck/pkg/trucks"
+	"github.com/flowchartsman/swaggerui"
 	"github.com/gorilla/mux"
-
 	_ "github.com/joho/godotenv/autoload" // Autoloads .env file if it exists
 )
 

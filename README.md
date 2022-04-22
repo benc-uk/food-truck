@@ -52,6 +52,7 @@ Here is a outline of some of the key decisions, trade offs, limitations & choice
 ### Limitations, Known Issues & Backlog
 
 - The query for finding nearby trucks is _extremely_ suboptimal and a borderline hack. Switching to a database service with spatial support like Cosmos, PostgreSQL or Azure SQL should be the highest priority.
+- Fix the leaky/poor abstraction in the database spec & improve the unit testing method.
 - ~~Auth key to Azure Maps should be fetched with API, not baked into frontend code.~~ DONE!
 - GitHub Actions for CI & CD
   - ~~Automate builds~~ DONE!
@@ -59,7 +60,7 @@ Here is a outline of some of the key decisions, trade offs, limitations & choice
 - Rate limiting on the API (should use a upstream traffic gateway, e.g. ingress controller in Kubernetes NGINX/Envoy or Azure service like App Gateway).
 - Auth in front of the API (likewise this should be handled by the gateway to do JWT validation etc).
 - Sem ver for images and releases.
-- Fix the unit tests with the database mocked/stubbed.
+
 - Add end to end API & performance tests, k6.io is my tool of choice for this, or Postman/Newman.
 - Switch to RFC 7807 (Problem Details) for API errors https://datatracker.ietf.org/doc/html/rfc7807
 - Consider switching to dependency injection but should weigh up the pros & cons.

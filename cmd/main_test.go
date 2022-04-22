@@ -1,6 +1,8 @@
 package main
 
-// tests for main.go
+//
+// Integration tests for Trucks API, these make actual HTTP calls, and require the database
+//
 
 import (
 	"io/ioutil"

@@ -35,7 +35,7 @@ func (s *TruckService) FindNear(lat float64, long float64, radius int) ([]Truck,
 
 	// TODO: Phase 1: Use Euclidian/Pythagorean distance, i.e. a circle with SQRT(x^2 + y^2)
 	// TODO: Phase 2: Migrate to a REAL spatial database, e.g. Azure Cosmos DB or SQL Server
-	rows, err := s.db.QuerySimple(`SELECT locationId, value as name, Latitude, Longitude, Address, FoodItems 
+	rows, err := s.db.QueryTrucks(`SELECT locationId, value as name, Latitude, Longitude, Address, FoodItems 
 	FROM Mobile_Food_Facility_Permit 
 	INNER JOIN Applicant ON Applicant.id = Mobile_Food_Facility_Permit.Applicant 
 	WHERE Latitude != 0 AND Latitude > ` + latMinStr + ` AND Latitude < ` + latMaxStr +
@@ -45,22 +45,31 @@ func (s *TruckService) FindNear(lat float64, long float64, radius int) ([]Truck,
 		return nil, &Error{Code: ErrorOther, Message: "Failed to fetch trucks"}
 	}
 
-	trucks := []Truck{}
+	log.Printf("Found %d trucks", len(rows))
 
-	defer rows.Close()
-	for rows.Next() {
-		t := Truck{}
-		err := rows.Scan(&t.ID, &t.Name, &t.Lat, &t.Long, &t.addressNullStr, &t.descNullStr)
-		if t.descNullStr.Valid {
-			t.Description = t.descNullStr.String
+	// Map the rows to trucks
+	trucks := []Truck{}
+	for _, truckRow := range rows {
+		truck := Truck{}
+		if truckRow.ID.Valid {
+			truck.ID = truckRow.ID.String
 		}
-		if t.addressNullStr.Valid {
-			t.Address = t.addressNullStr.String
+		if truckRow.Name.Valid {
+			truck.Name = truckRow.Name.String
 		}
-		if err != nil {
-			return nil, err
+		if truckRow.Description.Valid {
+			truck.Description = truckRow.Description.String
 		}
-		trucks = append(trucks, t)
+		if truckRow.Lat.Valid {
+			truck.Lat = truckRow.Lat.Float64
+		}
+		if truckRow.Long.Valid {
+			truck.Long = truckRow.Long.Float64
+		}
+		if truckRow.Address.Valid {
+			truck.Address = truckRow.Address.String
+		}
+		trucks = append(trucks, truck)
 	}
 
 	return trucks, nil
