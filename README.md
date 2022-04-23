@@ -20,21 +20,25 @@ Here is a outline of some of the key decisions, trade offs, limitations & choice
   - Local hot reload with cosmtrek/air
   - Build, tag & push container images
 - Unit & integration tests
-- Runnable images are hosted here on GitHub
+- Runnable images are hosted [here on GitHub Container Registry](https://github.com/benc-uk/food-truck/pkgs/container/food-truck)
 - Bicep template for deployment to Azure running as a Azure Container App
 - Dev Container with all required tooling, to support local development
+- [Performance and black box REST API tests using k6](./tests/)
 
 ### Project Structure
 
 - The repo adopts the "[Standard Go Project Layout](https://github.com/golang-standards/project-layout)" which can be unfamiliar to those that have not worked with Go. A full breakdown of the repo structure is provided below
-- In addition my [own project starter template](https://github.com/benc-uk/project-starter) and [Go REST API for bookstore](https://github.com/benc-uk/go-rest-books) were used to bring a lot of reuseable assets, boilerplate and working source code.
-- Bicep code was borrowed from two other personal projects [benc-uk/bicep-iac](https://github.com/benc-uk/bicep-iac) and [benc-uk/chatr](https://github.com/benc-uk/chatr)
-- The breaking up of the API code into many packages and multiple source files was probably overkill at this point in the project but it provided a common set of abstractions (controllers, services, middleware, data-handlers) and also testability
+- In addition several of my own open source projects were used to bring many reuseable assets, boilerplate and working source code:
+  - My own project starter template: [benc-uk/project-starter](https://github.com/benc-uk/project-starter) 
+  - Go REST API for bookstore: [benc-uk/go-rest-books](https://github.com/benc-uk/go-rest-books) 
+  - Bicep code was borrowed from:  [benc-uk/bicep-iac](https://github.com/benc-uk/bicep-iac) and [benc-uk/chatr](https://github.com/benc-uk/chatr)
+  - Performance tests were taken from other projects and reports use [my k6 report generator (benc-uk/k6-reporter)](https://github.com/benc-uk/k6-reporter)
+- The breaking up of the API code into many packages, interfaces and multiple source files was probably overkill at this point (with single endpoint etc) However it provided a common set of abstractions (routing, services, middleware, data-handlers) and also importantly testability
 
 ### Data
 
 - SQLite DB was used rather than a CSV file, this was sourced from here https://san-francisco.datasettes.com/food-trucks. A full blown database service was felt to be overkill for the assignment but being able to use SQL queries represented a reasonable degree of "realism".
-- SQLite is extremely fast & powerful, but it's a extremely bad choice for a real backend & CRUD, so this decision was purely tactical and doesn't represent best/recommended practice.
+- SQLite is very fast & powerful, but it's a extremely bad choice for a backend service with CRUD, so this decision was purely tactical and doesn't represent best/recommended practice.
 - There are some duplicates in the database, with the same name, lat & long but different IDs. This can result in less than 5 trucks being shown on the map even when 5 or more are present in the data returned from the API.
 
 ### Front End
@@ -51,7 +55,7 @@ Here is a outline of some of the key decisions, trade offs, limitations & choice
 
 ### Limitations, Known Issues & Backlog
 
-- The query for finding nearby trucks is _extremely_ suboptimal and a borderline hack. Switching to a database service with spatial support like Cosmos, PostgreSQL or Azure SQL should be the highest priority.
+- The query for finding nearby trucks is _extremely_ sub-optimal and a borderline hack. Switching to a database service with spatial support like Cosmos, PostgreSQL or Azure SQL should be the highest priority.
 - Fix the leaky/poor abstraction in the database spec & improve the unit testing method.
 - ~~Auth key to Azure Maps should be fetched with API, not baked into frontend code.~~ DONE!
 - GitHub Actions for CI & CD
@@ -60,10 +64,11 @@ Here is a outline of some of the key decisions, trade offs, limitations & choice
 - Rate limiting on the API (should use a upstream traffic gateway, e.g. ingress controller in Kubernetes NGINX/Envoy or Azure service like App Gateway).
 - Auth in front of the API (likewise this should be handled by the gateway to do JWT validation etc).
 - Sem ver for images and releases.
-
-- Add end to end API & performance tests, k6.io is my tool of choice for this, or Postman/Newman.
+- Add CLI tool
+- ~~Add end to end API & performance tests, k6.io is my tool of choice for this, or Postman/Newman.~~
 - Switch to RFC 7807 (Problem Details) for API errors https://datatracker.ietf.org/doc/html/rfc7807
 - Consider switching to dependency injection but should weigh up the pros & cons.
+- Add rest of the application functionality ;)
 
 The rest of the readme follows in a format similar to one I use on my many open source projects on GitHub
 
@@ -93,6 +98,7 @@ run                  🏃 Run server & frontend host, with hot reload for local 
 install-tools        🔮 Install dev tools
 generate             🔬 Generate Swagger / OpenAPI spec
 test                 🧪 Run unit and integration tests
+test-perf            📈 Run performance tests
 deploy               🚀 Deploy to Azure using Bicep & Azure CLI
 ```
 
@@ -190,6 +196,7 @@ A brief description of the top-level directories of this project is as follows:
 │   ├── data     - Data layer for calling SQLite
 │   └── trucks   - Truck API and service
 ├── scripts      - Some helper scripts
+├── tests        - End to end performance tests
 └── web
     └── client   - The application frontend source code
 ```

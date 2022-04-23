@@ -70,6 +70,10 @@ test: ## 🧪 Run unit and integration tests
 	@figlet $@ || true
 	go test ./... -v -count=1
 
+test-perf: ## 📈 Run performance tests
+	@figlet $@ || true
+	@tests/run.sh
+
 deploy: ## 🚀 Deploy to Azure using Bicep & Azure CLI
 	@figlet $@ || true
 	@./deploy/deploy.sh

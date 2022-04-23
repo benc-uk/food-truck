@@ -44,18 +44,6 @@ func TestMain(m *testing.M) {
 //
 // Test cases
 //
-func TestGetRoot(t *testing.T) {
-	expected := http.StatusOK
-	res, err := http.Get(testServer.URL)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if res.StatusCode != expected {
-		t.Errorf("Status code was: %d, expected: %d", res.StatusCode, expected)
-	}
-}
-
 func TestGetTrucksSanFran(t *testing.T) {
 	expected := http.StatusOK
 	res, err := http.Get(testServer.URL + "/trucks/37.7758/-122.4205")

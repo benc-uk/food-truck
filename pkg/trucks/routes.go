@@ -14,13 +14,13 @@ const startRadius = 400
 // AddRoutes registers all application routes with the API
 func (a *API) AddRoutes(router *mux.Router) {
 	router.HandleFunc("/trucks/{lat}/{long}", a.findTrucksNear).Methods("GET")
-	router.HandleFunc("/", a.root).Methods("GET")
+	router.HandleFunc("/", a.redirectToApp).Methods("GET")
 	a.Healthy = true
 }
 
-// Use when hitting the base or root URL
-func (a *API) root(w http.ResponseWriter, r *http.Request) {
-	_, _ = w.Write([]byte("Server is online, happy days"))
+// Use when hitting the base or root
+func (a *API) redirectToApp(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/app/", http.StatusFound)
 }
 
 // swagger:operation GET /trucks/{lat}/{long} findTrucksNear
