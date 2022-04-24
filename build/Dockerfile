@@ -13,6 +13,8 @@ RUN apk update && apk add git gcc musl-dev
 # Fetch and cache Go modules
 COPY go.mod .
 COPY go.sum .
+RUN go mod download
+
 # Copy in Go source files
 COPY cmd/ ./cmd
 COPY pkg/ ./pkg
@@ -25,7 +27,8 @@ RUN CGO_ENABLED=1 GOOS=linux go build \
 # ================================================================================================
 # === Stage 2: Bundle server and frontend into Docker image
 # ================================================================================================
-FROM golang:1.18-alpine
+# Can't use scratch image as we have built a binary with CGO_ENABLED
+FROM golang:1.18-alpine 
 WORKDIR /app 
 
 # Copy in database and frontend files
