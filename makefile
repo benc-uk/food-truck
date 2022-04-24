@@ -1,5 +1,5 @@
 # Common variables
-VERSION := 0.0.7
+VERSION := 0.0.8
 BUILD_INFO := Manual build from makefile
 SRC_DIR := ./cmd
 
@@ -72,7 +72,7 @@ test: ## 🧪 Run unit and integration tests
 
 test-perf: ## 📈 Run performance tests
 	@figlet $@ || true
-	@tests/run.sh
+	@cd tests; ./run.sh
 
 deploy: ## 🚀 Deploy to Azure using Bicep & Azure CLI
 	@figlet $@ || true

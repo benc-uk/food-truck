@@ -30,6 +30,13 @@ export async function getConfig() {
 }
 
 // ========================================================
+// Used to fetch status from the server
+// ========================================================
+export async function getStatus() {
+  return await apiCall(`status`)
+}
+
+// ========================================================
 // Wrapper around fetch, private and not exported
 // ========================================================
 async function apiCall(apiPath, method = 'get', data = null) {

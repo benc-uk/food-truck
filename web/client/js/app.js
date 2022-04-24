@@ -5,7 +5,8 @@
 import 'https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.js'
 
 // Use the API client
-import { getTrucksNear, getTrucksInRadius, getConfig } from './api-client.js'
+import { getTrucksNear, getTrucksInRadius, getConfig, getStatus } from './api-client.js'
+import { showToast } from './toast.js'
 
 let map = null
 const defaultZoom = 15
@@ -89,6 +90,16 @@ async function initApp() {
   map.events.add('click', (evt) => {
     refreshMap(evt.position[0], evt.position[1])
   })
+
+  document.querySelector('#status').addEventListener('click', async () => {
+    const status = await getStatus()
+    showToast(
+      `API Status:<br><ul><li>Healthy: ${status.healthy}</li><li>Version: ${status.version}</li>
+      <li>Host: ${status.hostname}</li><li>Uptime: ${status.uptime}</li><li>Go Version: ${status.goVersion}</li>`,
+      5000,
+      'top-right'
+    )
+  })
 }
 
 // =============================================================================
@@ -106,6 +117,7 @@ async function showTrucks(lat, long) {
     // We could search for ANY 5 trucks, but they could be hundreds of miles away, seems dumb
     const trucks = await getTrucksNear(long, lat)
 
+    showToast(`Located ${trucks.length} food trucks!`, 2000, 'top-right')
     // Process the data
     for (const truck of trucks) {
       const point = new atlas.data.Point([truck.long, truck.lat])
