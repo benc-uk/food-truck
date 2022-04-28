@@ -23,6 +23,9 @@ func NewService(db data.Database) *TruckService {
 // FindNear returns a list of trucks near a given lat & long and within a radius
 func (s *TruckService) FindNear(lat float64, long float64, radius int) ([]Truck, error) {
 	log.Printf("Finding trucks near %f, %f", lat, long)
+	if radius < 0 {
+		return nil, fmt.Errorf("radius must be greater than 0")
+	}
 
 	// TODO: This is a HACK to approximate the radius in meters in long/lat
 	const oneMLat = 0.000009

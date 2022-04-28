@@ -36,7 +36,7 @@ func NewMockDB() *MockDB {
 				ID:          sql.NullString{"2", true},
 				Name:        sql.NullString{"Truck 2", true},
 				Description: sql.NullString{"Truck 2 description", true},
-				Lat:         sql.NullFloat64{23.8, true},
+				Lat:         sql.NullFloat64{30.1, true},
 				Long:        sql.NullFloat64{34.0, true},
 				Address:     sql.NullString{"Truck 2 address", true},
 			},
@@ -65,12 +65,10 @@ func TestMain(m *testing.M) {
 // Test cases for the Truck Service
 //
 func TestFindNear(t *testing.T) {
-
-	// TODO: Tests removed due to lack of time to mock the database
-
 	trucks, err := service.FindNear(23.8, 34.0, 500)
 	if err != nil {
 		log.Fatal(err)
+		t.Error(err)
 	}
 
 	if len(trucks) <= 0 {
@@ -79,15 +77,8 @@ func TestFindNear(t *testing.T) {
 }
 
 func TestFindNearBad(t *testing.T) {
-
-	// TODO: Tests removed due to lack of time to mock the database
-
-	trucks, err := service.FindNear(23.8, 34.0, -500)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if len(trucks) <= 0 {
-		t.Error("Expected results but got zero")
+	_, err := service.FindNear(123, 456, -50)
+	if err == nil {
+		t.Error("Expected error not returned")
 	}
 }
